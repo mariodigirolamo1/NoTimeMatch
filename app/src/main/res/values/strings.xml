@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">NoTimeMatch</string>
+    <string name="closet_navigation_button_text">Closet</string>
+    <string name="matches_navigation_button_text">Matches</string>
+    <string name="re_match_navigation_button_text">Re-Match</string>
 </resources>
