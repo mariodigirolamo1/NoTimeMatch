@@ -17,21 +17,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mdg.notimematch.model.Garment
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
 @Composable
-fun Closet() {
+fun Closet(
+    // TODO: this needs to be checked
+    numberOfCategories: Int = Garment.getNumberOfCategories()
+) {
     // TODO: add vertical list of categories
     // TODO: in each category add a label and an horizontal scrollable gridview
     // TODO: in each block of the griview add placeholder images
     // TODO: if the category is empty, show only a block with a "+" icon in the center
-    Categories()
+    Categories(numberOfCategories = numberOfCategories)
 }
 
 @Composable
-private fun Categories(){
+private fun Categories(
+    // remove this default and make this explicit
+    numberOfCategories: Int
+){
     LazyColumn{
-        repeat(5){categoryNum ->
+        repeat(numberOfCategories){categoryNum ->
             item(key = "category$categoryNum"){
                 LazyHorizontalGrid(
                     modifier = Modifier
@@ -71,7 +78,7 @@ fun ClosetPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Closet()
+            Closet(numberOfCategories = 5)
         }
     }
 }
