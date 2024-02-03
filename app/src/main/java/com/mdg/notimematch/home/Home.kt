@@ -12,17 +12,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.mdg.notimematch.R
+import com.mdg.notimematch.navigation.Routes
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
 @Composable
-fun Home() {
+fun Home(
+    navigateToDestination: (route: String) -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button({}){
+        Button(onClick = {
+            navigateToDestination(Routes.CLOSET.value)
+        }){
             Text(stringResource(R.string.closet_navigation_button_text))
         }
         Button({}){
@@ -43,7 +49,7 @@ fun HomePreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Home()
+            Home {}
         }
     }
 }
