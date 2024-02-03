@@ -1,8 +1,12 @@
 package com.mdg.notimematch.closet
 
+import android.graphics.fonts.FontStyle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -18,55 +22,68 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mdg.notimematch.model.Garment
+import com.mdg.notimematch.model.GarmentTypes
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
 @Composable
-fun Closet(
-    // TODO: this needs to be checked
-    numberOfCategories: Int = Garment.getNumberOfCategories()
-) {
-    // TODO: add vertical list of categories
-    // TODO: in each category add a label and an horizontal scrollable gridview
-    // TODO: in each block of the griview add placeholder images
+fun Closet() {
     // TODO: if the category is empty, show only a block with a "+" icon in the center
-    Categories(numberOfCategories = numberOfCategories)
+    Categories()
 }
 
 @Composable
-private fun Categories(
-    // remove this default and make this explicit
-    numberOfCategories: Int
-){
+private fun Categories(){
     LazyColumn{
-        repeat(numberOfCategories){categoryNum ->
-            item(key = "category$categoryNum"){
-                LazyHorizontalGrid(
+        GarmentTypes.values().forEach { garmentType ->
+            item(key = garmentType.name){
+                Column (
                     modifier = Modifier
-                        .height(200.dp)
+                        .fillMaxWidth()
                         .padding(all = 20.dp),
-                    rows = GridCells.Fixed(1)
-                ){
-                    repeat(10){categoryItemNum ->
-                        val categoryItemKey = "category${categoryNum}item$categoryItemNum"
-                        item(key = categoryItemKey) {
-                            Box(
-                                modifier = Modifier
-                                    .height(200.dp)
-                                    .width(200.dp)
-                                    .padding(end = 10.dp)
-                                    .background(MaterialTheme.colorScheme.onBackground),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = categoryItemKey,
-                                    color = MaterialTheme.colorScheme.background
-                                )
-                            }
-                        }
-                    }
+                ) {
+                    Text(
+                        text = garmentType.name,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    CategoryItems(garmentTypeName = garmentType.name)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CategoryItems(
+    garmentTypeName: String
+){
+    LazyHorizontalGrid(
+        modifier = Modifier
+            .height(200.dp),
+        rows = GridCells.Fixed(1)
+    ){
+        repeat(10){categoryItemNum ->
+            item(key = "${garmentTypeName}_item_$categoryItemNum") {
+                CategoryItem(categoryItemNum = categoryItemNum)
+            }
+        }
+    }
+}
+
+@Composable
+fun CategoryItem(categoryItemNum: Int) {
+    Box(
+        modifier = Modifier
+            .height(200.dp)
+            .width(200.dp)
+            .padding(end = 10.dp)
+            .background(MaterialTheme.colorScheme.onBackground),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = categoryItemNum.toString(),
+            color = MaterialTheme.colorScheme.background
+        )
     }
 }
 
@@ -78,7 +95,7 @@ fun ClosetPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Closet(numberOfCategories = 5)
+            Closet()
         }
     }
 }
