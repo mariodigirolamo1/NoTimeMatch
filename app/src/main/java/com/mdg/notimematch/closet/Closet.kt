@@ -1,6 +1,5 @@
 package com.mdg.notimematch.closet
 
-import android.graphics.fonts.FontStyle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mdg.notimematch.model.Garment
 import com.mdg.notimematch.model.GarmentTypes
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
@@ -35,18 +33,20 @@ fun Closet() {
 private fun Categories(){
     LazyColumn{
         GarmentTypes.values().forEach { garmentType ->
-            item(key = garmentType.name){
+            val garmentTypeValue = garmentType.value
+
+            item(key = garmentTypeValue){
                 Column (
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(all = 20.dp),
                 ) {
                     Text(
-                        text = garmentType.name,
+                        text = garmentTypeValue,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    CategoryItems(garmentTypeName = garmentType.name)
+                    CategoryItems(garmentTypeName = garmentTypeValue)
                 }
             }
         }
@@ -62,6 +62,7 @@ fun CategoryItems(
             .height(200.dp),
         rows = GridCells.Fixed(1)
     ){
+        // TODO: this is a mock number, those need to be retrieved from a local database
         repeat(10){categoryItemNum ->
             item(key = "${garmentTypeName}_item_$categoryItemNum") {
                 CategoryItem(categoryItemNum = categoryItemNum)

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mdg.notimematch.closet.Closet
 import com.mdg.notimematch.home.Home
 import com.mdg.notimematch.navigation.Routes
 
@@ -13,7 +14,12 @@ fun NoTimeMatchApp() {
 
     NavHost(navController = navController, startDestination = Routes.HOME.value){
         composable(Routes.HOME.value){
-            Home()
+            Home { route ->
+                navController.navigate(route = route)
+            }
+        }
+        composable(Routes.CLOSET.value){
+            Closet()
         }
     }
 }
