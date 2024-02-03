@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -50,12 +52,17 @@ android {
 }
 
 dependencies {
+    ksp("androidx.room:room-compiler:2.5.0")
 
-    // reflection
+    // DI
+    implementation("com.google.dagger:hilt-android:2.44")
+    ksp("com.google.dagger:hilt-android-compiler:2.44")
+
+    // Reflection
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
 
-    // navigation
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
     implementation("androidx.core:core-ktx:1.9.0")
