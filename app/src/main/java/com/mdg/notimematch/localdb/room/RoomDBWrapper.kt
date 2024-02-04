@@ -16,7 +16,7 @@ class RoomDBWrapper: LocalDB {
             context = applicationContext,
             klass = AppDatabase::class.java,
             name = applicationContext.getString(R.string.database_name)
-        ).build()
+        ).build() 
 
         garmentDao = db.garmentDao()
     }
