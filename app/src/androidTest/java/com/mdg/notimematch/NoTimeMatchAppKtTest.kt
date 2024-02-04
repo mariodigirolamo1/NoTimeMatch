@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.mdg.notimematch.model.GarmentType
 import com.mdg.notimematch.navigation.Routes
 import org.junit.Assert
 import org.junit.Before
@@ -43,6 +44,16 @@ class NoTimeMatchAppKtTest{
         ).performClick()
 
         navController.assertCurrentRoute(Routes.CLOSET.value)
+        assertCategoryLabelsExist()
+    }
+
+    private fun assertCategoryLabelsExist(){
+        GarmentType.values().forEach { garmentType ->
+            val labelText = context.getString(
+                GarmentType.getStringResourceForType(type = garmentType)
+            )
+            composeTestRule.onNodeWithText(labelText).assertExists()
+        }
     }
 }
 
