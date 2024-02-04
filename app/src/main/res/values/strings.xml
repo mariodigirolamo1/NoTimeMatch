@@ -3,4 +3,10 @@
     <string name="closet_navigation_button_text">Closet</string>
     <string name="matches_navigation_button_text">Matches</string>
     <string name="re_match_navigation_button_text">Re-Match</string>
+
+    <!-- Closet and garments -->
+    <string name="garment_type_shoes">Shoes</string>
+    <string name="garment_type_pants">Pants</string>
+    <string name="garment_type_shirt">Shirt</string>
+    <string name="garment_type_jacket">Jacket</string>
 </resources>
