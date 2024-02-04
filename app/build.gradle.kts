@@ -52,6 +52,7 @@ android {
 }
 
 dependencies {
+    // Local DB
     ksp("androidx.room:room-compiler:2.5.0")
 
     // DI
@@ -59,11 +60,12 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.44")
 
     // Reflection
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.navigation:navigation-testing:2.7.6")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
