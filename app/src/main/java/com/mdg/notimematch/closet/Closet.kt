@@ -73,8 +73,10 @@ fun CategoryItems(
             .height(200.dp),
         rows = GridCells.Fixed(1)
     ){
-        // TODO: retrieve clothes from database
-        // TODO: add a function to retrieve garments by type
+        // TODO: add a function to retrieve garments by type, get all does not fit
+        //  we could also choose to return a map with type as key and list as value
+        //  so we end up doing just one function call, it is just a wrapper but it's fine
+        //  for the low number fo fetches we'll need to do
     }
 }
 
