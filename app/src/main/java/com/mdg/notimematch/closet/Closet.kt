@@ -21,17 +21,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.model.GarmentType
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
 @Composable
-fun Closet() {
+fun Closet(
+    getAllGarments: () -> List<Garment>
+) {
     // TODO: if the category is empty, show only a block with a "+" icon in the center
-    Categories()
+    Categories(getAllGarments = getAllGarments)
 }
 
 @Composable
-private fun Categories(){
+private fun Categories(
+    getAllGarments: () -> List<Garment>
+){
     LazyColumn{
         GarmentType.values().forEach { garmentType ->
             val garmentTypeValue = garmentType.value
@@ -48,7 +53,10 @@ private fun Categories(){
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    CategoryItems(garmentTypeName = garmentTypeValue)
+                    CategoryItems(
+                        garmentTypeName = garmentTypeValue,
+                        getAllGarments = getAllGarments
+                    )
                 }
             }
         }
@@ -57,19 +65,16 @@ private fun Categories(){
 
 @Composable
 fun CategoryItems(
-    garmentTypeName: String
+    garmentTypeName: String,
+    getAllGarments: () -> List<Garment>
 ){
     LazyHorizontalGrid(
         modifier = Modifier
             .height(200.dp),
         rows = GridCells.Fixed(1)
     ){
-        // TODO: this is a mock number, those need to be retrieved from a local database
-        repeat(10){categoryItemNum ->
-            item(key = "${garmentTypeName}_item_$categoryItemNum") {
-                CategoryItem(categoryItemNum = categoryItemNum)
-            }
-        }
+        // TODO: retrieve clothes from database
+        // TODO: add a function to retrieve garments by type
     }
 }
 
@@ -98,7 +103,7 @@ fun ClosetPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Closet()
+            Closet(getAllGarments = {ArrayList()})
         }
     }
 }

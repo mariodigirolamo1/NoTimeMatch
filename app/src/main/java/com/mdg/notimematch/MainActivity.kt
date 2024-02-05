@@ -9,9 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.mdg.notimematch.localdb.LocalDB
+import com.mdg.notimematch.localdb.di.RoomDB
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class MainActivity : ComponentActivity() {
+@AndroidEntryPoint
+class MainActivity @Inject constructor(
+    @RoomDB val localDB: LocalDB
+) : ComponentActivity() {
     // TODO: this is a very basic implementation of this permission check
     private val activityResultLauncher =
         registerForActivityResult(
@@ -42,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NoTimeMatchApp()
+                    NoTimeMatchApp(getAllGarments = {localDB.getAllGarments()})
                 }
             }
         }
