@@ -42,7 +42,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -52,8 +52,14 @@ android {
 }
 
 dependencies {
+    val roomVersion = "2.6.1"
+
     // Local DB
-    ksp("androidx.room:room-compiler:2.5.0")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    testImplementation("androidx.room:room-testing:$roomVersion")
 
     // DI
     implementation("com.google.dagger:hilt-android:2.44")
@@ -83,4 +89,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation(kotlin("reflect"))
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }

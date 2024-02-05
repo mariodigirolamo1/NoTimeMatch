@@ -9,4 +9,5 @@
     <string name="garment_type_pants">Pants</string>
     <string name="garment_type_shirt">Shirt</string>
     <string name="garment_type_jacket">Jacket</string>
+    <string name="database_name">no-time-match-database</string>
 </resources>
