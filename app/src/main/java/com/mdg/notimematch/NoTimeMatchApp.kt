@@ -6,14 +6,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mdg.notimematch.closet.Closet
+import com.mdg.notimematch.closet.ClosetViewModel
 import com.mdg.notimematch.home.Home
 import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.navigation.Routes
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
 fun NoTimeMatchApp(
     navController: NavHostController = rememberNavController(),
-    getAllGarments: () -> List<Garment>
+    closetViewModel: ClosetViewModel
 ) {
     NavHost(navController = navController, startDestination = Routes.HOME.value){
         composable(Routes.HOME.value){
@@ -22,7 +24,7 @@ fun NoTimeMatchApp(
             }
         }
         composable(Routes.CLOSET.value){
-            Closet(getAllGarments = getAllGarments)
+            Closet(getAllGarments = { closetViewModel.getAllGarments() })
         }
     }
 }

@@ -5,10 +5,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.mdg.notimematch.closet.ClosetViewModel
 import com.mdg.notimematch.localdb.LocalDB
 import com.mdg.notimematch.localdb.di.RoomDB
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
@@ -16,9 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity @Inject constructor(
-    @RoomDB val localDB: LocalDB
-) : ComponentActivity() {
+class MainActivity : ComponentActivity() {
+    private val closetViewModel: ClosetViewModel by viewModels()
+
     // TODO: this is a very basic implementation of this permission check
     private val activityResultLauncher =
         registerForActivityResult(
@@ -49,7 +51,7 @@ class MainActivity @Inject constructor(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NoTimeMatchApp(getAllGarments = {localDB.getAllGarments()})
+                    NoTimeMatchApp(closetViewModel = closetViewModel)
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.mdg.notimematch.localdb.di
 
+import com.mdg.notimematch.localdb.LocalDB
 import com.mdg.notimematch.localdb.room.RoomDBWrapper
 import dagger.Module
 import dagger.Provides
@@ -12,9 +13,9 @@ import javax.inject.Singleton
 class DatabaseModule {
 
     @Singleton
-    @Provides
     @RoomDB
-    fun provideRoomDB(): RoomDBWrapper = RoomDBWrapper()
+    @Provides
+    fun provideRoomDB(): LocalDB = RoomDBWrapper()
 }
 
 annotation class RoomDB

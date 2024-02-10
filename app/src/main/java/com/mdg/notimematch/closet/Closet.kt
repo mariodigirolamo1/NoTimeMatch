@@ -38,7 +38,7 @@ private fun Categories(
     getAllGarments: () -> List<Garment>
 ){
     LazyColumn{
-        GarmentType.values().forEach { garmentType ->
+        GarmentType.entries.forEach { garmentType ->
             val garmentTypeValue = garmentType.value
 
             item(key = garmentTypeValue){
