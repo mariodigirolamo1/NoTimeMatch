@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,10 +74,29 @@ fun CategoryItems(
             .height(200.dp),
         rows = GridCells.Fixed(1)
     ){
+        item {
+            AddItemButton(categoryName = garmentTypeName)
+        }
         // TODO: add a function to retrieve garments by type, get all does not fit
         //  we could also choose to return a map with type as key and list as value
         //  so we end up doing just one function call, it is just a wrapper but it's fine
         //  for the low number fo fetches we'll need to do
+    }
+}
+
+@Composable
+fun AddItemButton(categoryName: String) {
+    Box(
+        modifier = Modifier
+            .height(200.dp)
+            .width(200.dp)
+            .padding(end = 10.dp)
+            .background(MaterialTheme.colorScheme.onBackground),
+        contentAlignment = Alignment.Center
+    ) {
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "Add $categoryName")
+        }
     }
 }
 
