@@ -29,19 +29,19 @@ import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 @Composable
 fun Closet(
     getAllGarments: () -> List<Garment>,
-    takePicture: () -> Unit
+    openCamera: () -> Unit
 ) {
     // TODO: if the category is empty, show only a block with a "+" icon in the center
     Categories(
         getAllGarments = getAllGarments,
-        takePicture = takePicture
+        openCamera = openCamera
     )
 }
 
 @Composable
 private fun Categories(
     getAllGarments: () -> List<Garment>,
-    takePicture: () -> Unit
+    openCamera: () -> Unit
 ){
     LazyColumn{
         GarmentType.entries.forEach { garmentType ->
@@ -62,7 +62,7 @@ private fun Categories(
                     CategoryItems(
                         garmentTypeName = garmentTypeValue,
                         getAllGarments = getAllGarments,
-                        takePicture = takePicture
+                        openCamera = openCamera
                     )
                 }
             }
@@ -74,7 +74,7 @@ private fun Categories(
 fun CategoryItems(
     garmentTypeName: String,
     getAllGarments: () -> List<Garment>,
-    takePicture: () -> Unit
+    openCamera: () -> Unit
 ){
     LazyHorizontalGrid(
         modifier = Modifier
@@ -84,7 +84,7 @@ fun CategoryItems(
         item {
             AddItemButton(
                 categoryName = garmentTypeName,
-                takePicture = takePicture
+                openCamera = openCamera
             )
         }
         // TODO: add a function to retrieve garments by type, get all does not fit
@@ -97,7 +97,7 @@ fun CategoryItems(
 @Composable
 fun AddItemButton(
     categoryName: String,
-    takePicture: () -> Unit
+    openCamera: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -107,7 +107,7 @@ fun AddItemButton(
             .background(MaterialTheme.colorScheme.onBackground),
         contentAlignment = Alignment.Center
     ) {
-        Button(onClick = takePicture) {
+        Button(onClick = openCamera) {
             Text(text = "Add $categoryName")
         }
     }
@@ -140,7 +140,7 @@ fun ClosetPreview() {
         ) {
             Closet(
                 getAllGarments = {ArrayList()},
-                takePicture = {}
+                openCamera = {}
             )
         }
     }

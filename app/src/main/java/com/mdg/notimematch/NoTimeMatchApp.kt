@@ -5,12 +5,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mdg.notimematch.camera.Camera
 import com.mdg.notimematch.closet.Closet
 import com.mdg.notimematch.closet.ClosetViewModel
 import com.mdg.notimematch.home.Home
-import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.navigation.Routes
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
 fun NoTimeMatchApp(
@@ -26,8 +25,11 @@ fun NoTimeMatchApp(
         composable(Routes.CLOSET.value){
             Closet(
                 getAllGarments = { closetViewModel.getAllGarments() },
-                takePicture = { closetViewModel.takePicture() }
+                openCamera = { navController.navigate(route = Routes.CAMERA.value) }
             )
+        }
+        composable(Routes.CAMERA.value){
+            Camera()
         }
     }
 }
