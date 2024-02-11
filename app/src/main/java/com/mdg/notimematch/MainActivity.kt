@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.mdg.notimematch.camera.CameraViewModel
 import com.mdg.notimematch.closet.ClosetViewModel
 import com.mdg.notimematch.localdb.LocalDB
 import com.mdg.notimematch.localdb.di.RoomDB
@@ -20,6 +21,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val closetViewModel: ClosetViewModel by viewModels()
+    private val cameraViewModel: CameraViewModel by viewModels()
 
     // TODO: this is a very basic implementation of this permission check
     private val activityResultLauncher =
@@ -51,7 +53,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NoTimeMatchApp(closetViewModel = closetViewModel)
+                    NoTimeMatchApp(
+                        closetViewModel = closetViewModel,
+                        cameraViewModel = cameraViewModel,
+                        outputDirectory = filesDir
+                    )
                 }
             }
         }
