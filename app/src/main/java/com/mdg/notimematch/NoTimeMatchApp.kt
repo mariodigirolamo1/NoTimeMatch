@@ -24,7 +24,10 @@ fun NoTimeMatchApp(
             }
         }
         composable(Routes.CLOSET.value){
-            Closet(getAllGarments = { closetViewModel.getAllGarments() })
+            Closet(
+                getAllGarments = { closetViewModel.getAllGarments() },
+                takePicture = { closetViewModel.takePicture() }
+            )
         }
     }
 }

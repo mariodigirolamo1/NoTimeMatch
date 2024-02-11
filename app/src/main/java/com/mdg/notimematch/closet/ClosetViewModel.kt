@@ -14,4 +14,8 @@ class ClosetViewModel @Inject constructor(
     fun getAllGarments(): List<Garment> {
         return localDB.getAllGarments()
     }
+
+    fun takePicture(): Unit {
+        // TODO: launch camera
+    }
 }

@@ -28,15 +28,20 @@ import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
 @Composable
 fun Closet(
-    getAllGarments: () -> List<Garment>
+    getAllGarments: () -> List<Garment>,
+    takePicture: () -> Unit
 ) {
     // TODO: if the category is empty, show only a block with a "+" icon in the center
-    Categories(getAllGarments = getAllGarments)
+    Categories(
+        getAllGarments = getAllGarments,
+        takePicture = takePicture
+    )
 }
 
 @Composable
 private fun Categories(
-    getAllGarments: () -> List<Garment>
+    getAllGarments: () -> List<Garment>,
+    takePicture: () -> Unit
 ){
     LazyColumn{
         GarmentType.entries.forEach { garmentType ->
@@ -56,7 +61,8 @@ private fun Categories(
                     Spacer(modifier = Modifier.height(10.dp))
                     CategoryItems(
                         garmentTypeName = garmentTypeValue,
-                        getAllGarments = getAllGarments
+                        getAllGarments = getAllGarments,
+                        takePicture = takePicture
                     )
                 }
             }
@@ -67,7 +73,8 @@ private fun Categories(
 @Composable
 fun CategoryItems(
     garmentTypeName: String,
-    getAllGarments: () -> List<Garment>
+    getAllGarments: () -> List<Garment>,
+    takePicture: () -> Unit
 ){
     LazyHorizontalGrid(
         modifier = Modifier
@@ -75,7 +82,10 @@ fun CategoryItems(
         rows = GridCells.Fixed(1)
     ){
         item {
-            AddItemButton(categoryName = garmentTypeName)
+            AddItemButton(
+                categoryName = garmentTypeName,
+                takePicture = takePicture
+            )
         }
         // TODO: add a function to retrieve garments by type, get all does not fit
         //  we could also choose to return a map with type as key and list as value
@@ -85,7 +95,10 @@ fun CategoryItems(
 }
 
 @Composable
-fun AddItemButton(categoryName: String) {
+fun AddItemButton(
+    categoryName: String,
+    takePicture: () -> Unit
+) {
     Box(
         modifier = Modifier
             .height(200.dp)
@@ -94,7 +107,7 @@ fun AddItemButton(categoryName: String) {
             .background(MaterialTheme.colorScheme.onBackground),
         contentAlignment = Alignment.Center
     ) {
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = takePicture) {
             Text(text = "Add $categoryName")
         }
     }
@@ -125,7 +138,10 @@ fun ClosetPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Closet(getAllGarments = {ArrayList()})
+            Closet(
+                getAllGarments = {ArrayList()},
+                takePicture = {}
+            )
         }
     }
 }
