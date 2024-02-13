@@ -1,11 +1,15 @@
 package com.mdg.notimematch
 
+import android.net.Uri
+import android.os.Build
 import androidx.camera.core.ImageCapture
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.mdg.notimematch.camera.Camera
 import com.mdg.notimematch.camera.CameraViewModel
 import com.mdg.notimematch.closet.Closet
@@ -13,7 +17,12 @@ import com.mdg.notimematch.closet.ClosetViewModel
 import com.mdg.notimematch.confirmphoto.ConfirmPhoto
 import com.mdg.notimematch.home.Home
 import com.mdg.notimematch.navigation.Routes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun NoTimeMatchApp(
@@ -39,17 +48,29 @@ fun NoTimeMatchApp(
             Camera(
                 takePhoto = { imageCapture: ImageCapture ->
                     cameraViewModel.takePhoto(
-                        onImageCaptured = { uri ->
-                            println("photo uri is $uri")
+                        onImageCaptured = { uri, coroutineScope ->
+                            val encodedUri = Uri.encode(uri.toString())
+                            coroutineScope.launch{
+                                withContext(Dispatchers.Main){
+                                    navController.navigate("${Routes.CONFIRM_PHOTO.value}/$encodedUri")
+                                }
+                            }
                         },
-                        onError = {},
+                        onError = {
+                            // TODO: handle this
+                        },
                         imageCapture = imageCapture, outputDirectory = outputDirectory
                     )
                 }
             )
         }
-        composable(Routes.CONFIRM_PHOTO.value){
-            ConfirmPhoto()
+        composable(
+            route = "${Routes.CONFIRM_PHOTO.value}/{photoUriString}",
+            arguments = listOf(navArgument("photoUriString") { type = NavType.StringType })
+        ){ backStackEntry ->
+            val encodedPhotoUriString = backStackEntry.arguments?.getString("photoUriString")
+            val photoUriString = Uri.decode(encodedPhotoUriString)
+            ConfirmPhoto(photoUri = Uri.parse(photoUriString))
         }
     }
 }

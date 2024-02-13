@@ -5,17 +5,20 @@ import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class CameraViewModel @Inject constructor(): ViewModel() {
     fun takePhoto(
-        onImageCaptured: (Uri) -> Unit,
+        onImageCaptured: (Uri, CoroutineScope) -> Unit,
         onError: (ImageCaptureException) -> Unit,
         imageCapture: ImageCapture,
         outputDirectory: File,
@@ -35,7 +38,7 @@ class CameraViewModel @Inject constructor(): ViewModel() {
 
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                 val savedUri = Uri.fromFile(photoFile)
-                onImageCaptured(savedUri)
+                onImageCaptured(savedUri, viewModelScope)
             }
         })
     }
