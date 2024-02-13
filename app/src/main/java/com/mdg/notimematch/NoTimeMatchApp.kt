@@ -10,6 +10,7 @@ import com.mdg.notimematch.camera.Camera
 import com.mdg.notimematch.camera.CameraViewModel
 import com.mdg.notimematch.closet.Closet
 import com.mdg.notimematch.closet.ClosetViewModel
+import com.mdg.notimematch.confirmphoto.ConfirmPhoto
 import com.mdg.notimematch.home.Home
 import com.mdg.notimematch.navigation.Routes
 import java.io.File
@@ -37,9 +38,18 @@ fun NoTimeMatchApp(
             // TODO: refer to this https://www.kiloloco.com/articles/015-camera-jetpack-compose/ 
             Camera(
                 takePhoto = { imageCapture: ImageCapture ->
-                    cameraViewModel.takePhoto({},{},imageCapture,outputDirectory)
+                    cameraViewModel.takePhoto(
+                        onImageCaptured = { uri ->
+                            println("photo uri is $uri")
+                        },
+                        onError = {},
+                        imageCapture = imageCapture, outputDirectory = outputDirectory
+                    )
                 }
             )
+        }
+        composable(Routes.CONFIRM_PHOTO.value){
+            ConfirmPhoto()
         }
     }
 }
