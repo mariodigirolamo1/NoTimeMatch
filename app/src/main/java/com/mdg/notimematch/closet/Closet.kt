@@ -28,19 +28,19 @@ import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
 @Composable
 fun Closet(
-    getAllGarments: () -> List<Garment>,
+    garments: List<Garment>,
     openCamera: () -> Unit
 ) {
     // TODO: if the category is empty, show only a block with a "+" icon in the center
     Categories(
-        getAllGarments = getAllGarments,
+        garments = garments,
         openCamera = openCamera
     )
 }
 
 @Composable
 private fun Categories(
-    getAllGarments: () -> List<Garment>,
+    garments: List<Garment>,
     openCamera: () -> Unit
 ){
     LazyColumn{
@@ -61,7 +61,7 @@ private fun Categories(
                     Spacer(modifier = Modifier.height(10.dp))
                     CategoryItems(
                         garmentTypeName = garmentTypeValue,
-                        getAllGarments = getAllGarments,
+                        garments = garments,
                         openCamera = openCamera
                     )
                 }
@@ -73,7 +73,7 @@ private fun Categories(
 @Composable
 fun CategoryItems(
     garmentTypeName: String,
-    getAllGarments: () -> List<Garment>,
+    garments: List<Garment>,
     openCamera: () -> Unit
 ){
     LazyHorizontalGrid(
@@ -87,10 +87,14 @@ fun CategoryItems(
                 openCamera = openCamera
             )
         }
-        // TODO: add a function to retrieve garments by type, get all does not fit
-        //  we could also choose to return a map with type as key and list as value
-        //  so we end up doing just one function call, it is just a wrapper but it's fine
-        //  for the low number fo fetches we'll need to do
+        // TODO: this should be a get garment per type
+        garments.forEachIndexed { position, garment ->
+            if(garment.type.value == garmentTypeName){
+                item{
+                    CategoryItem(categoryItemNum = position)
+                }
+            }
+        }
     }
 }
 
@@ -123,6 +127,7 @@ fun CategoryItem(categoryItemNum: Int) {
             .background(MaterialTheme.colorScheme.onBackground),
         contentAlignment = Alignment.Center
     ) {
+        // TODO: display image instead of text 
         Text(
             text = categoryItemNum.toString(),
             color = MaterialTheme.colorScheme.background
@@ -139,7 +144,7 @@ fun ClosetPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             Closet(
-                getAllGarments = {ArrayList()},
+                garments = ArrayList(),
                 openCamera = {}
             )
         }

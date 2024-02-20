@@ -3,6 +3,7 @@ package com.mdg.notimematch
 import android.net.Uri
 import androidx.camera.core.ImageCapture
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -40,9 +41,12 @@ fun NoTimeMatchApp(
             }
         }
         composable(Routes.CLOSET.value){
+            closetViewModel.fetchGarments()
             Closet(
-                getAllGarments = { closetViewModel.getAllGarments() },
-                openCamera = { navController.navigate(route = Routes.CAMERA.value) }
+                garments = closetViewModel.garments.collectAsState().value,
+                openCamera = {
+                    navController.navigate(route = Routes.CAMERA.value)
+                }
             )
         }
         composable(Routes.CAMERA.value){
@@ -54,7 +58,6 @@ fun NoTimeMatchApp(
                             val encodedUri = Uri.encode(uri.toString())
                             coroutineScope.launch{
                                 withContext(Dispatchers.Main){
-                                    println("should navigate")
                                     navController.navigate("${Routes.CONFIRM_PHOTO.value}/$encodedUri")
                                 }
                             }
@@ -89,7 +92,7 @@ fun NoTimeMatchApp(
                     )
                     confirmPhotoViewModel.saveGarmentToDB(garment = garment)
 
-                    navController.popBackStack()
+                    navController.popBackStack(Routes.HOME.value,false)
                     navController.navigate(Routes.CLOSET.value)
                 },
                 retakePhoto = {
