@@ -13,10 +13,13 @@ import androidx.compose.ui.Modifier
 import com.mdg.notimematch.camera.CameraViewModel
 import com.mdg.notimematch.closet.ClosetViewModel
 import com.mdg.notimematch.confirmphoto.ConfirmPhotoViewModel
+import com.mdg.notimematch.localdb.LocalDB
+import com.mdg.notimematch.localdb.di.RoomDB
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
