@@ -1,5 +1,9 @@
 package com.mdg.notimematch.screens.garmentdetails
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mdg.notimematch.localdb.LocalDB
@@ -9,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +27,13 @@ class GarmentDetailsViewModel @Inject constructor(
 
     fun fetchGarment(garmentId: Int){
         viewModelScope.launch(Dispatchers.IO) {
-            localDB.getGarmentById(uid = garmentId)
+            _garment.update {
+                localDB.getGarmentById(uid = garmentId)
+            }
         }
+    }
+
+    fun getBitmapFromUri(photoUri: Uri): Bitmap {
+        return BitmapFactory.decodeFile(photoUri.toFile().path)
     }
 }

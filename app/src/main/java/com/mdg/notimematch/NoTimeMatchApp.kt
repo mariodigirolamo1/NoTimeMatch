@@ -52,6 +52,9 @@ fun NoTimeMatchApp(
                 openCamera = {
                     navController.navigate(route = Routes.CAMERA.value)
                 },
+                goToDetails = { garmentId: Int ->
+                    navController.navigate("${Routes.GARMENT_DETAILS.value}/$garmentId")
+                },
                 getBitmapFromUriString = {uriString ->
                     closetViewModel.getBitmapFromUriString(
                         context = context,
@@ -69,7 +72,13 @@ fun NoTimeMatchApp(
                 garmentDetailsViewModel.fetchGarment(garmentId = garmentId)
                 val garment = garmentDetailsViewModel.garment.collectAsState().value
                 if (garment != null) {
-                    GarmentDetails(garment = garment)
+                    GarmentDetails(
+                        getBitmapFromUriString = {
+                            garmentDetailsViewModel.getBitmapFromUri(
+                                photoUri = Uri.parse(garment.photoUriString)
+                            )
+                        }
+                    )
                 }else{
                     // TODO: handle null garment
                 }
