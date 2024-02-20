@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.mdg.notimematch.screens.camera.Camera
 import com.mdg.notimematch.screens.camera.CameraViewModel
 import com.mdg.notimematch.screens.closet.Closet
@@ -77,6 +78,12 @@ fun NoTimeMatchApp(
                             garmentDetailsViewModel.getBitmapFromUri(
                                 photoUri = Uri.parse(garment.photoUriString)
                             )
+                        },
+                        deleteGarment = {
+                            garmentDetailsViewModel.deleteGarment {
+                                navController.popBackStack(Routes.HOME.value,false)
+                                navController.navigate(Routes.CLOSET.value)
+                            }
                         }
                     )
                 }else{

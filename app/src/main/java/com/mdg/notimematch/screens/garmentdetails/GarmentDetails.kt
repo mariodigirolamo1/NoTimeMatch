@@ -65,11 +65,14 @@ fun GarmentDetails(
 fun GarmentDetailsPreview() {
     NoTimeMatchTheme {
         val context = LocalContext.current
-        GarmentDetails {
-            BitmapFactory.decodeResource(
-                context.resources,
-                android.R.drawable.alert_dark_frame
-            )
-        }
+        GarmentDetails(
+            getBitmapFromUriString = {
+                BitmapFactory.decodeResource(
+                    context.resources,
+                    android.R.drawable.alert_dark_frame
+                )
+            },
+            deleteGarment = {}
+        )
     }
 }

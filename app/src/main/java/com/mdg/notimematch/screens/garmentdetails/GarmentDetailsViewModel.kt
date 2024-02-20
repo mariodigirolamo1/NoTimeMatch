@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +30,17 @@ class GarmentDetailsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _garment.update {
                 localDB.getGarmentById(uid = garmentId)
+            }
+        }
+    }
+
+    fun deleteGarment(
+        navigateToCloset: () -> Unit
+    ){
+        viewModelScope.launch(Dispatchers.IO) {
+            _garment.value?.let { garment -> localDB.deleteGarment(garment) }
+            withContext(Dispatchers.Main){
+                navigateToCloset()
             }
         }
     }
