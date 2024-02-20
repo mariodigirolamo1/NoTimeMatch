@@ -1,5 +1,8 @@
 package com.mdg.notimematch.closet
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,19 +35,22 @@ import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 @Composable
 fun Closet(
     garments: List<Garment>,
-    openCamera: () -> Unit
+    openCamera: () -> Unit,
+    getBitmapFromUriString: (uriString: String) -> Bitmap
 ) {
     // TODO: if the category is empty, show only a block with a "+" icon in the center
     Categories(
         garments = garments,
-        openCamera = openCamera
+        openCamera = openCamera,
+        getBitmapFromUriString = getBitmapFromUriString
     )
 }
 
 @Composable
 private fun Categories(
     garments: List<Garment>,
-    openCamera: () -> Unit
+    openCamera: () -> Unit,
+    getBitmapFromUriString: (uriString: String) -> Bitmap
 ){
     LazyColumn{
         GarmentType.entries.forEach { garmentType ->
@@ -62,7 +71,8 @@ private fun Categories(
                     CategoryItems(
                         garmentTypeName = garmentTypeValue,
                         garments = garments,
-                        openCamera = openCamera
+                        openCamera = openCamera,
+                        getBitmapFromUriString = getBitmapFromUriString
                     )
                 }
             }
@@ -74,7 +84,8 @@ private fun Categories(
 fun CategoryItems(
     garmentTypeName: String,
     garments: List<Garment>,
-    openCamera: () -> Unit
+    openCamera: () -> Unit,
+    getBitmapFromUriString: (uriString: String) -> Bitmap
 ){
     LazyHorizontalGrid(
         modifier = Modifier
@@ -90,8 +101,11 @@ fun CategoryItems(
         // TODO: this should be a get garment per type
         garments.forEachIndexed { position, garment ->
             if(garment.type.value == garmentTypeName){
-                item{
-                    CategoryItem(categoryItemNum = position)
+                item("garment$garmentTypeName$position"){
+                    CategoryItem(
+                        garment = garment,
+                        getBitmapFromUriString = getBitmapFromUriString
+                    )
                 }
             }
         }
@@ -118,7 +132,10 @@ fun AddItemButton(
 }
 
 @Composable
-fun CategoryItem(categoryItemNum: Int) {
+fun CategoryItem(
+    garment: Garment,
+    getBitmapFromUriString: (uriString: String) -> Bitmap
+) {
     Box(
         modifier = Modifier
             .height(200.dp)
@@ -127,10 +144,14 @@ fun CategoryItem(categoryItemNum: Int) {
             .background(MaterialTheme.colorScheme.onBackground),
         contentAlignment = Alignment.Center
     ) {
-        // TODO: display image instead of text 
-        Text(
-            text = categoryItemNum.toString(),
-            color = MaterialTheme.colorScheme.background
+        val bitmap = BitmapPainter(
+            image = getBitmapFromUriString(
+                garment.photoUriString
+            ).asImageBitmap()
+        )
+        Image(
+            painter = bitmap,
+            contentDescription = null
         )
     }
 }
@@ -143,9 +164,16 @@ fun ClosetPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
+            val context = LocalContext.current
             Closet(
                 garments = ArrayList(),
-                openCamera = {}
+                openCamera = {},
+                getBitmapFromUriString = {
+                    BitmapFactory.decodeResource(
+                        context.resources,
+                        android.R.drawable.alert_dark_frame
+                    )
+                }
             )
         }
     }

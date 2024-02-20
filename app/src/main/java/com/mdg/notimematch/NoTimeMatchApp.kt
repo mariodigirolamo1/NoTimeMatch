@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.camera.core.ImageCapture
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,10 +43,17 @@ fun NoTimeMatchApp(
         }
         composable(Routes.CLOSET.value){
             closetViewModel.fetchGarments()
+            val context = LocalContext.current
             Closet(
                 garments = closetViewModel.garments.collectAsState().value,
                 openCamera = {
                     navController.navigate(route = Routes.CAMERA.value)
+                },
+                getBitmapFromUriString = {uriString ->
+                    closetViewModel.getBitmapFromUriString(
+                        context = context,
+                        uriString = uriString
+                    )
                 }
             )
         }
