@@ -11,15 +11,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.mdg.notimematch.camera.Camera
-import com.mdg.notimematch.camera.CameraViewModel
-import com.mdg.notimematch.closet.Closet
-import com.mdg.notimematch.closet.ClosetViewModel
-import com.mdg.notimematch.confirmphoto.ConfirmPhoto
-import com.mdg.notimematch.confirmphoto.ConfirmPhotoViewModel
-import com.mdg.notimematch.home.Home
+import androidx.navigation.navigation
+import com.mdg.notimematch.screens.camera.Camera
+import com.mdg.notimematch.screens.camera.CameraViewModel
+import com.mdg.notimematch.screens.closet.Closet
+import com.mdg.notimematch.screens.closet.ClosetViewModel
+import com.mdg.notimematch.screens.confirmphoto.ConfirmPhoto
+import com.mdg.notimematch.screens.confirmphoto.ConfirmPhotoViewModel
+import com.mdg.notimematch.screens.garmentdetails.GarmentDetails
+import com.mdg.notimematch.screens.home.Home
 import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.navigation.Routes
+import com.mdg.notimematch.screens.garmentdetails.GarmentDetailsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,6 +35,7 @@ fun NoTimeMatchApp(
     closetViewModel: ClosetViewModel,
     cameraViewModel: CameraViewModel,
     confirmPhotoViewModel: ConfirmPhotoViewModel,
+    garmentDetailsViewModel: GarmentDetailsViewModel,
     outputDirectory: File,
     cameraExecutor: ExecutorService
 ) {
@@ -49,6 +53,9 @@ fun NoTimeMatchApp(
                 openCamera = {
                     navController.navigate(route = Routes.CAMERA.value)
                 },
+                goToDetails = { garmentId: Int ->
+                    navController.navigate("${Routes.GARMENT_DETAILS.value}/$garmentId")
+                },
                 getBitmapFromUriString = {uriString ->
                     closetViewModel.getBitmapFromUriString(
                         context = context,
@@ -56,6 +63,35 @@ fun NoTimeMatchApp(
                     )
                 }
             )
+        }
+        composable(
+            route = "${Routes.GARMENT_DETAILS.value}/{garmentId}",
+            arguments = listOf(navArgument("garmentId") { type = NavType.IntType })
+        ){backStackEntry ->
+            val garmentId = backStackEntry.arguments?.getInt("garmentId")
+            if (garmentId != null) {
+                garmentDetailsViewModel.fetchGarment(garmentId = garmentId)
+                val garment = garmentDetailsViewModel.garment.collectAsState().value
+                if (garment != null) {
+                    GarmentDetails(
+                        getBitmapFromUriString = {
+                            garmentDetailsViewModel.getBitmapFromUri(
+                                photoUri = Uri.parse(garment.photoUriString)
+                            )
+                        },
+                        deleteGarment = {
+                            garmentDetailsViewModel.deleteGarment {
+                                navController.popBackStack(Routes.HOME.value,false)
+                                navController.navigate(Routes.CLOSET.value)
+                            }
+                        }
+                    )
+                }else{
+                    // TODO: handle null garment
+                }
+            }else{
+                // TODO: handle null garment id
+            }
         }
         composable(Routes.CAMERA.value){
             // TODO: refer to this https://www.kiloloco.com/articles/015-camera-jetpack-compose/ 

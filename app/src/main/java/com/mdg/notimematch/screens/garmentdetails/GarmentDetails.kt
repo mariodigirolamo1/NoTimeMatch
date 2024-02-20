@@ -1,4 +1,4 @@
-package com.mdg.notimematch.confirmphoto
+package com.mdg.notimematch.screens.garmentdetails
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,80 +18,61 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mdg.notimematch.R
-import com.mdg.notimematch.model.GarmentType
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
 @Composable
-fun ConfirmPhoto(
-    getBitmapFromUri: () -> Bitmap,
-    saveGarment: (type: GarmentType) -> Unit,
-    retakePhoto: () -> Unit
+fun GarmentDetails(
+    getBitmapFromUriString: () -> Bitmap,
+    deleteGarment: () -> Unit
 ) {
+    val photoBitmap = getBitmapFromUriString()
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ){
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Image(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            bitmap = getBitmapFromUri().asImageBitmap(),
-            contentDescription =
-            stringResource(R.string.garment_photo_to_confirm_content_description),
+            bitmap = photoBitmap.asImageBitmap(),
+            contentDescription = null
         )
-
         Spacer(modifier = Modifier.height(32.dp))
-
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+            horizontalArrangement = Arrangement.Center
         ){
             Button(
                 modifier = Modifier
-                    .weight(1f)
-                    .height(64.dp)
-                    .padding(8.dp),
-                onClick = retakePhoto
-            ){
-                Text(text = stringResource(R.string.reject_photo_button_text))
-            }
-            Button(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(64.dp)
-                    .padding(8.dp),
-                // TODO: ask user for correct type
-                onClick = { saveGarment(GarmentType.JACKET) }
-            ){
-                Text(text = stringResource(R.string.save_photo_button_text))
+                    .fillMaxWidth(0.5f)
+                    .height(74.dp)
+                    .padding(bottom = 32.dp),
+                onClick = { deleteGarment() }
+            ) {
+                Text(text = "Delete garment")
             }
         }
-
-        Spacer(modifier = Modifier.height(64.dp))
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ConfirmPhotoPreview() {
+fun GarmentDetailsPreview() {
     NoTimeMatchTheme {
         val context = LocalContext.current
-        ConfirmPhoto(
-            getBitmapFromUri = {
+        GarmentDetails(
+            getBitmapFromUriString = {
                 BitmapFactory.decodeResource(
                     context.resources,
                     android.R.drawable.alert_dark_frame
                 )
             },
-            saveGarment = {},
-            retakePhoto = {}
+            deleteGarment = {}
         )
     }
 }

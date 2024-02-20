@@ -1,4 +1,4 @@
-package com.mdg.notimematch.camera
+package com.mdg.notimematch.screens.camera
 
 import android.content.Context
 import android.net.Uri

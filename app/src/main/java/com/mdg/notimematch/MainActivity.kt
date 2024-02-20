@@ -10,11 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.mdg.notimematch.camera.CameraViewModel
-import com.mdg.notimematch.closet.ClosetViewModel
-import com.mdg.notimematch.confirmphoto.ConfirmPhotoViewModel
+import com.mdg.notimematch.screens.camera.CameraViewModel
+import com.mdg.notimematch.screens.closet.ClosetViewModel
+import com.mdg.notimematch.screens.confirmphoto.ConfirmPhotoViewModel
 import com.mdg.notimematch.localdb.LocalDB
 import com.mdg.notimematch.localdb.di.RoomDB
+import com.mdg.notimematch.screens.garmentdetails.GarmentDetailsViewModel
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.ExecutorService
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
     private val closetViewModel: ClosetViewModel by viewModels()
     private val cameraViewModel: CameraViewModel by viewModels()
     private val confirmPhotoViewModel: ConfirmPhotoViewModel by viewModels()
+    private val garmentDetailsViewModel: GarmentDetailsViewModel by viewModels()
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -64,6 +66,7 @@ class MainActivity : ComponentActivity() {
                     NoTimeMatchApp(
                         closetViewModel = closetViewModel,
                         cameraViewModel = cameraViewModel,
+                        garmentDetailsViewModel = garmentDetailsViewModel,
                         confirmPhotoViewModel = confirmPhotoViewModel,
                         outputDirectory = filesDir,
                         cameraExecutor = cameraExecutor

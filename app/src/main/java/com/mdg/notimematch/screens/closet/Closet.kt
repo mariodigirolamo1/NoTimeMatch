@@ -1,9 +1,11 @@
-package com.mdg.notimematch.closet
+package com.mdg.notimematch.screens.closet
 
+import android.R
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,12 +38,14 @@ import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 fun Closet(
     garments: List<Garment>,
     openCamera: () -> Unit,
+    goToDetails: (garmentId: Int) -> Unit,
     getBitmapFromUriString: (uriString: String) -> Bitmap
 ) {
     // TODO: if the category is empty, show only a block with a "+" icon in the center
     Categories(
         garments = garments,
         openCamera = openCamera,
+        goToDetails = goToDetails,
         getBitmapFromUriString = getBitmapFromUriString
     )
 }
@@ -50,6 +54,7 @@ fun Closet(
 private fun Categories(
     garments: List<Garment>,
     openCamera: () -> Unit,
+    goToDetails: (garmentId: Int) -> Unit,
     getBitmapFromUriString: (uriString: String) -> Bitmap
 ){
     LazyColumn{
@@ -72,6 +77,7 @@ private fun Categories(
                         garmentTypeName = garmentTypeValue,
                         garments = garments,
                         openCamera = openCamera,
+                        goToDetails = goToDetails,
                         getBitmapFromUriString = getBitmapFromUriString
                     )
                 }
@@ -85,6 +91,7 @@ fun CategoryItems(
     garmentTypeName: String,
     garments: List<Garment>,
     openCamera: () -> Unit,
+    goToDetails: (garmentId: Int) -> Unit,
     getBitmapFromUriString: (uriString: String) -> Bitmap
 ){
     LazyHorizontalGrid(
@@ -104,6 +111,7 @@ fun CategoryItems(
                 item("garment$garmentTypeName$position"){
                     CategoryItem(
                         garment = garment,
+                        goToDetails = goToDetails,
                         getBitmapFromUriString = getBitmapFromUriString
                     )
                 }
@@ -134,6 +142,7 @@ fun AddItemButton(
 @Composable
 fun CategoryItem(
     garment: Garment,
+    goToDetails: (garmentId: Int) -> Unit,
     getBitmapFromUriString: (uriString: String) -> Bitmap
 ) {
     Box(
@@ -141,7 +150,8 @@ fun CategoryItem(
             .height(200.dp)
             .width(200.dp)
             .padding(end = 10.dp)
-            .background(MaterialTheme.colorScheme.onBackground),
+            .background(MaterialTheme.colorScheme.onBackground)
+            .clickable { garment.uid?.let { goToDetails(it) } },
         contentAlignment = Alignment.Center
     ) {
         val bitmap = BitmapPainter(
@@ -168,10 +178,11 @@ fun ClosetPreview() {
             Closet(
                 garments = ArrayList(),
                 openCamera = {},
+                goToDetails = {},
                 getBitmapFromUriString = {
                     BitmapFactory.decodeResource(
                         context.resources,
-                        android.R.drawable.alert_dark_frame
+                        R.drawable.alert_dark_frame
                     )
                 }
             )

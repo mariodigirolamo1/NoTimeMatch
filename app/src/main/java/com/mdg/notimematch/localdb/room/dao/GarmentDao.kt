@@ -11,6 +11,9 @@ interface GarmentDao {
     @Query("SELECT * FROM garment")
     fun getAll(): List<Garment>
 
+    @Query("SELECT * FROM garment WHERE uid=:uid")
+    fun getById(uid: Int): Garment
+
     @Insert
     fun insertAll(vararg garment: Garment)
 

@@ -1,4 +1,4 @@
-package com.mdg.notimematch.confirmphoto
+package com.mdg.notimematch.screens.confirmphoto
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

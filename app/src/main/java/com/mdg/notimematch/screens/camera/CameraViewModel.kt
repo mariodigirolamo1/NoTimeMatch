@@ -1,4 +1,4 @@
-package com.mdg.notimematch.camera
+package com.mdg.notimematch.screens.camera
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
