@@ -10,4 +10,7 @@
     <string name="garment_type_shirt">Shirt</string>
     <string name="garment_type_jacket">Jacket</string>
     <string name="database_name">no-time-match-database</string>
+    <string name="reject_photo_button_text">Reject</string>
+    <string name="save_photo_button_text">Save</string>
+    <string name="garment_photo_to_confirm_content_description">garment photo to confirm</string>
 </resources>

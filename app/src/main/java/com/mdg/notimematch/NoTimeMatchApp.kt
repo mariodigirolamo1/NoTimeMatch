@@ -78,9 +78,13 @@ fun NoTimeMatchApp(
         ){ backStackEntry ->
             val encodedPhotoUriString = backStackEntry.arguments?.getString("photoUriString")
             val photoUriString = Uri.decode(encodedPhotoUriString)
-            ConfirmPhoto(getBitmapFromUri = {
-                confirmPhotoViewModel.getBitmapFromUri(Uri.parse(photoUriString))
-            })
+            ConfirmPhoto(
+                getBitmapFromUri = {
+                    confirmPhotoViewModel.getBitmapFromUri(Uri.parse(photoUriString))
+                },
+                savePhoto = {},
+                retakePhoto = {}
+            )
         }
     }
 }
