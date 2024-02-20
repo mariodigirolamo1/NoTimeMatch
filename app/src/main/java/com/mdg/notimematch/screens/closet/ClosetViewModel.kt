@@ -1,4 +1,4 @@
-package com.mdg.notimematch.closet
+package com.mdg.notimematch.screens.closet
 
 import android.content.ContentResolver
 import android.content.Context

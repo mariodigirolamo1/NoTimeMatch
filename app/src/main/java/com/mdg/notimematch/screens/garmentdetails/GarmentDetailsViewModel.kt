@@ -1,10 +1,5 @@
-package com.mdg.notimematch.confirmphoto
+package com.mdg.notimematch.screens.garmentdetails
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.ExifInterface
-import android.net.Uri
-import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mdg.notimematch.localdb.LocalDB
@@ -12,23 +7,22 @@ import com.mdg.notimematch.localdb.di.RoomDB
 import com.mdg.notimematch.localdb.room.entity.Garment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ConfirmPhotoViewModel @Inject constructor(
+class GarmentDetailsViewModel @Inject constructor(
     @RoomDB
     val localDB: LocalDB
 ) : ViewModel() {
-    fun getBitmapFromUri(photoUri: Uri): Bitmap {
-        return BitmapFactory.decodeFile(photoUri.toFile().path)
-    }
+    private var _garment = MutableStateFlow<Garment?>(null)
+    val garment = _garment.asStateFlow()
 
-    fun saveGarmentToDB(
-        garment: Garment
-    ){
+    fun fetchGarment(garmentId: Int){
         viewModelScope.launch(Dispatchers.IO) {
-            localDB.addGarment(garment)
+            localDB.getGarmentById(uid = garmentId)
         }
     }
 }

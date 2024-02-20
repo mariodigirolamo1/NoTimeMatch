@@ -1,4 +1,4 @@
-package com.mdg.notimematch.home
+package com.mdg.notimematch.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

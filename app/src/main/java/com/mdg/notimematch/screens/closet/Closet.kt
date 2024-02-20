@@ -1,5 +1,6 @@
-package com.mdg.notimematch.closet
+package com.mdg.notimematch.screens.closet
 
+import android.R
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
@@ -171,7 +172,7 @@ fun ClosetPreview() {
                 getBitmapFromUriString = {
                     BitmapFactory.decodeResource(
                         context.resources,
-                        android.R.drawable.alert_dark_frame
+                        R.drawable.alert_dark_frame
                     )
                 }
             )
