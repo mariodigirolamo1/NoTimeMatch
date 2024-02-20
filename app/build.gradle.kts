@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -62,8 +62,8 @@ dependencies {
     testImplementation("androidx.room:room-testing:$roomVersion")
 
     // DI
-    implementation("com.google.dagger:hilt-android:2.44")
-    ksp("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("com.google.dagger:hilt-android:2.50")
+    ksp("com.google.dagger:hilt-android-compiler:2.50")
 
     // Reflection
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
@@ -72,6 +72,18 @@ dependencies {
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.navigation:navigation-testing:2.7.6")
+
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+
+    // Camera
+    val cameraxVersion = "1.3.1"
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-view:1.3.1")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

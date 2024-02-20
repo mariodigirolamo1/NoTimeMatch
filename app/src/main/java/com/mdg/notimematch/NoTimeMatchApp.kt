@@ -1,17 +1,39 @@
 package com.mdg.notimematch
 
+import android.net.Uri
+import android.os.Build
+import androidx.camera.core.ImageCapture
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.mdg.notimematch.camera.Camera
+import com.mdg.notimematch.camera.CameraViewModel
 import com.mdg.notimematch.closet.Closet
+import com.mdg.notimematch.closet.ClosetViewModel
+import com.mdg.notimematch.confirmphoto.ConfirmPhoto
+import com.mdg.notimematch.confirmphoto.ConfirmPhotoViewModel
 import com.mdg.notimematch.home.Home
 import com.mdg.notimematch.navigation.Routes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.util.concurrent.ExecutorService
 
 @Composable
 fun NoTimeMatchApp(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    closetViewModel: ClosetViewModel,
+    cameraViewModel: CameraViewModel,
+    confirmPhotoViewModel: ConfirmPhotoViewModel,
+    outputDirectory: File,
+    cameraExecutor: ExecutorService
 ) {
     NavHost(navController = navController, startDestination = Routes.HOME.value){
         composable(Routes.HOME.value){
@@ -20,7 +42,53 @@ fun NoTimeMatchApp(
             }
         }
         composable(Routes.CLOSET.value){
-            Closet()
+            Closet(
+                getAllGarments = { closetViewModel.getAllGarments() },
+                openCamera = { navController.navigate(route = Routes.CAMERA.value) }
+            )
+        }
+        composable(Routes.CAMERA.value){
+            // TODO: refer to this https://www.kiloloco.com/articles/015-camera-jetpack-compose/ 
+            Camera(
+                takePhoto = { imageCapture: ImageCapture ->
+                    cameraViewModel.takePhoto(
+                        onImageCaptured = { uri, coroutineScope ->
+                            val encodedUri = Uri.encode(uri.toString())
+                            coroutineScope.launch{
+                                withContext(Dispatchers.Main){
+                                    println("should navigate")
+                                    navController.navigate("${Routes.CONFIRM_PHOTO.value}/$encodedUri")
+                                }
+                            }
+                        },
+                        onError = {
+                            println("Error in taking photo")
+                            it.printStackTrace()
+                        },
+                        imageCapture = imageCapture,
+                        outputDirectory = outputDirectory,
+                        executor = cameraExecutor
+                    )
+                }
+            )
+        }
+        composable(
+            route = "${Routes.CONFIRM_PHOTO.value}/{photoUriString}",
+            arguments = listOf(navArgument("photoUriString") { type = NavType.StringType })
+        ){ backStackEntry ->
+            val encodedPhotoUriString = backStackEntry.arguments?.getString("photoUriString")
+            val photoUriString = Uri.decode(encodedPhotoUriString)
+            ConfirmPhoto(
+                getBitmapFromUri = {
+                    confirmPhotoViewModel.getBitmapFromUri(Uri.parse(photoUriString))
+                },
+                savePhoto = {
+                    // TODO: add this function to viewModel
+                },
+                retakePhoto = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

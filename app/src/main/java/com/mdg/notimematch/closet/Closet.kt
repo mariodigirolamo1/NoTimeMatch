@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,19 +22,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.model.GarmentType
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 
 @Composable
-fun Closet() {
+fun Closet(
+    getAllGarments: () -> List<Garment>,
+    openCamera: () -> Unit
+) {
     // TODO: if the category is empty, show only a block with a "+" icon in the center
-    Categories()
+    Categories(
+        getAllGarments = getAllGarments,
+        openCamera = openCamera
+    )
 }
 
 @Composable
-private fun Categories(){
+private fun Categories(
+    getAllGarments: () -> List<Garment>,
+    openCamera: () -> Unit
+){
     LazyColumn{
-        GarmentType.values().forEach { garmentType ->
+        GarmentType.entries.forEach { garmentType ->
             val garmentTypeValue = garmentType.value
 
             item(key = garmentTypeValue){
@@ -48,7 +59,11 @@ private fun Categories(){
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    CategoryItems(garmentTypeName = garmentTypeValue)
+                    CategoryItems(
+                        garmentTypeName = garmentTypeValue,
+                        getAllGarments = getAllGarments,
+                        openCamera = openCamera
+                    )
                 }
             }
         }
@@ -57,18 +72,43 @@ private fun Categories(){
 
 @Composable
 fun CategoryItems(
-    garmentTypeName: String
+    garmentTypeName: String,
+    getAllGarments: () -> List<Garment>,
+    openCamera: () -> Unit
 ){
     LazyHorizontalGrid(
         modifier = Modifier
             .height(200.dp),
         rows = GridCells.Fixed(1)
     ){
-        // TODO: this is a mock number, those need to be retrieved from a local database
-        repeat(10){categoryItemNum ->
-            item(key = "${garmentTypeName}_item_$categoryItemNum") {
-                CategoryItem(categoryItemNum = categoryItemNum)
-            }
+        item {
+            AddItemButton(
+                categoryName = garmentTypeName,
+                openCamera = openCamera
+            )
+        }
+        // TODO: add a function to retrieve garments by type, get all does not fit
+        //  we could also choose to return a map with type as key and list as value
+        //  so we end up doing just one function call, it is just a wrapper but it's fine
+        //  for the low number fo fetches we'll need to do
+    }
+}
+
+@Composable
+fun AddItemButton(
+    categoryName: String,
+    openCamera: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .height(200.dp)
+            .width(200.dp)
+            .padding(end = 10.dp)
+            .background(MaterialTheme.colorScheme.onBackground),
+        contentAlignment = Alignment.Center
+    ) {
+        Button(onClick = openCamera) {
+            Text(text = "Add $categoryName")
         }
     }
 }
@@ -98,7 +138,10 @@ fun ClosetPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Closet()
+            Closet(
+                getAllGarments = {ArrayList()},
+                openCamera = {}
+            )
         }
     }
 }
