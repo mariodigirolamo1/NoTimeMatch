@@ -82,8 +82,12 @@ fun NoTimeMatchApp(
                 getBitmapFromUri = {
                     confirmPhotoViewModel.getBitmapFromUri(Uri.parse(photoUriString))
                 },
-                savePhoto = {},
-                retakePhoto = {}
+                savePhoto = {
+                    // TODO: add this function to viewModel
+                },
+                retakePhoto = {
+                    navController.popBackStack()
+                }
             )
         }
     }
