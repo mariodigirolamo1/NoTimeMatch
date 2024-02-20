@@ -1,9 +1,10 @@
 package com.mdg.notimematch
 
 import android.net.Uri
-import android.os.Build
 import androidx.camera.core.ImageCapture
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,13 +18,12 @@ import com.mdg.notimematch.closet.ClosetViewModel
 import com.mdg.notimematch.confirmphoto.ConfirmPhoto
 import com.mdg.notimematch.confirmphoto.ConfirmPhotoViewModel
 import com.mdg.notimematch.home.Home
+import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.navigation.Routes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.util.concurrent.ExecutorService
 
 @Composable
@@ -42,9 +42,19 @@ fun NoTimeMatchApp(
             }
         }
         composable(Routes.CLOSET.value){
+            closetViewModel.fetchGarments()
+            val context = LocalContext.current
             Closet(
-                getAllGarments = { closetViewModel.getAllGarments() },
-                openCamera = { navController.navigate(route = Routes.CAMERA.value) }
+                garments = closetViewModel.garments.collectAsState().value,
+                openCamera = {
+                    navController.navigate(route = Routes.CAMERA.value)
+                },
+                getBitmapFromUriString = {uriString ->
+                    closetViewModel.getBitmapFromUriString(
+                        context = context,
+                        uriString = uriString
+                    )
+                }
             )
         }
         composable(Routes.CAMERA.value){
@@ -56,7 +66,6 @@ fun NoTimeMatchApp(
                             val encodedUri = Uri.encode(uri.toString())
                             coroutineScope.launch{
                                 withContext(Dispatchers.Main){
-                                    println("should navigate")
                                     navController.navigate("${Routes.CONFIRM_PHOTO.value}/$encodedUri")
                                 }
                             }
@@ -82,8 +91,17 @@ fun NoTimeMatchApp(
                 getBitmapFromUri = {
                     confirmPhotoViewModel.getBitmapFromUri(Uri.parse(photoUriString))
                 },
-                savePhoto = {
-                    // TODO: add this function to viewModel
+                saveGarment = { type ->
+                    val garment = Garment(
+                        type = type,
+                        // TODO: this will need to be extracted from code
+                        hexColor = "#FFFFFF",
+                        photoUriString = photoUriString
+                    )
+                    confirmPhotoViewModel.saveGarmentToDB(garment = garment)
+
+                    navController.popBackStack(Routes.HOME.value,false)
+                    navController.navigate(Routes.CLOSET.value)
                 },
                 retakePhoto = {
                     navController.popBackStack()

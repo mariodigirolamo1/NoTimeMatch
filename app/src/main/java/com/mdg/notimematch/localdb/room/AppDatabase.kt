@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.mdg.notimematch.localdb.room.dao.GarmentDao
 import com.mdg.notimematch.localdb.room.entity.Garment
 
-@Database(entities = [Garment::class], version = 1)
+@Database(entities = [Garment::class], version = 2)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun garmentDao(): GarmentDao
 }
