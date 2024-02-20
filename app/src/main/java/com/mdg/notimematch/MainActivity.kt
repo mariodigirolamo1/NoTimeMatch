@@ -12,16 +12,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.mdg.notimematch.camera.CameraViewModel
 import com.mdg.notimematch.closet.ClosetViewModel
-import com.mdg.notimematch.localdb.LocalDB
-import com.mdg.notimematch.localdb.di.RoomDB
+import com.mdg.notimematch.confirmphoto.ConfirmPhotoViewModel
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val closetViewModel: ClosetViewModel by viewModels()
     private val cameraViewModel: CameraViewModel by viewModels()
+    private val confirmPhotoViewModel: ConfirmPhotoViewModel by viewModels()
+
+    private lateinit var cameraExecutor: ExecutorService
 
     // TODO: this is a very basic implementation of this permission check
     private val activityResultLauncher =
@@ -47,6 +50,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPermissions()
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
         setContent {
             NoTimeMatchTheme {
                 Surface(
@@ -56,11 +61,18 @@ class MainActivity : ComponentActivity() {
                     NoTimeMatchApp(
                         closetViewModel = closetViewModel,
                         cameraViewModel = cameraViewModel,
-                        outputDirectory = filesDir
+                        confirmPhotoViewModel = confirmPhotoViewModel,
+                        outputDirectory = filesDir,
+                        cameraExecutor = cameraExecutor
                     )
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
     }
 
     private fun requestPermissions() {

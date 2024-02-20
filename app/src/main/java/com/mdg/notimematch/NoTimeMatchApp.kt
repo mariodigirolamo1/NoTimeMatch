@@ -15,6 +15,7 @@ import com.mdg.notimematch.camera.CameraViewModel
 import com.mdg.notimematch.closet.Closet
 import com.mdg.notimematch.closet.ClosetViewModel
 import com.mdg.notimematch.confirmphoto.ConfirmPhoto
+import com.mdg.notimematch.confirmphoto.ConfirmPhotoViewModel
 import com.mdg.notimematch.home.Home
 import com.mdg.notimematch.navigation.Routes
 import kotlinx.coroutines.Dispatchers
@@ -23,13 +24,16 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.ExecutorService
 
 @Composable
 fun NoTimeMatchApp(
     navController: NavHostController = rememberNavController(),
     closetViewModel: ClosetViewModel,
     cameraViewModel: CameraViewModel,
-    outputDirectory: File
+    confirmPhotoViewModel: ConfirmPhotoViewModel,
+    outputDirectory: File,
+    cameraExecutor: ExecutorService
 ) {
     NavHost(navController = navController, startDestination = Routes.HOME.value){
         composable(Routes.HOME.value){
@@ -52,14 +56,18 @@ fun NoTimeMatchApp(
                             val encodedUri = Uri.encode(uri.toString())
                             coroutineScope.launch{
                                 withContext(Dispatchers.Main){
+                                    println("should navigate")
                                     navController.navigate("${Routes.CONFIRM_PHOTO.value}/$encodedUri")
                                 }
                             }
                         },
                         onError = {
-                            // TODO: handle this
+                            println("Error in taking photo")
+                            it.printStackTrace()
                         },
-                        imageCapture = imageCapture, outputDirectory = outputDirectory
+                        imageCapture = imageCapture,
+                        outputDirectory = outputDirectory,
+                        executor = cameraExecutor
                     )
                 }
             )
@@ -70,7 +78,9 @@ fun NoTimeMatchApp(
         ){ backStackEntry ->
             val encodedPhotoUriString = backStackEntry.arguments?.getString("photoUriString")
             val photoUriString = Uri.decode(encodedPhotoUriString)
-            ConfirmPhoto(photoUri = Uri.parse(photoUriString))
+            ConfirmPhoto(getBitmapFromUri = {
+                confirmPhotoViewModel.getBitmapFromUri(Uri.parse(photoUriString))
+            })
         }
     }
 }
