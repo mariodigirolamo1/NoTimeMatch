@@ -26,11 +26,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.model.GarmentType
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
@@ -176,27 +179,15 @@ fun CategoryItem(
         contentAlignment = Alignment.Center
     ) {
         AsyncImage(
-            model = garment.photoUriString,
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(data = garment.photoUriString)
+                .crossfade(enable = true)
+                .crossfade(500)
+                .scale(Scale.FILL)
+                .build(),
             contentDescription = null,
+            contentScale = ContentScale.Crop
         )
-        /*
-        val bitmap = garmentListItem.bitmap
-        if(bitmap != null){
-            Image(
-                bitmap = bitmap.asImageBitmap(),
-                contentDescription = null
-            )
-        }else{
-            val darkFrame = BitmapFactory.decodeResource(
-                context.resources,
-                R.drawable.alert_dark_frame
-            )
-            Image(
-                bitmap = darkFrame.asImageBitmap(),
-                contentDescription = null
-            )
-        }
-         */
     }
 }
 
