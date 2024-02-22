@@ -27,7 +27,7 @@ import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
 @Composable
 fun ConfirmPhoto(
     getBitmapFromUri: () -> Bitmap,
-    saveGarment: (type: GarmentType) -> Unit,
+    saveGarment: () -> Unit,
     retakePhoto: () -> Unit
 ) {
     Column(
@@ -67,7 +67,7 @@ fun ConfirmPhoto(
                     .height(64.dp)
                     .padding(8.dp),
                 // TODO: ask user for correct type
-                onClick = { saveGarment(GarmentType.JACKET) }
+                onClick = saveGarment
             ){
                 Text(text = stringResource(R.string.save_photo_button_text))
             }

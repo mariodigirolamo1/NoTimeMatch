@@ -21,8 +21,8 @@ class RoomDBWrapper: LocalDB {
         garmentDao = db.garmentDao()
     }
 
-    override fun getAllGarments(): List<Garment> {
-        return garmentDao.getAll()
+    override fun getAllGarments(): ArrayList<Garment> {
+        return garmentDao.getAll() as ArrayList<Garment>
     }
 
     override fun getGarmentById(uid: Int): Garment {

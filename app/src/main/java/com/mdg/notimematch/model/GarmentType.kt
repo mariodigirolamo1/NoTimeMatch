@@ -15,5 +15,9 @@ enum class GarmentType(val value: String) {
             SHIRT -> R.string.garment_type_shirt
             JACKET -> R.string.garment_type_jacket
         }
+
+        fun from(value: String): GarmentType? {
+            return entries.firstOrNull{ it.value == value }
+        }
     }
 }
