@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -32,43 +34,28 @@ class CameraViewModel @Inject constructor(): ViewModel() {
             outputDirectory,
             SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(System.currentTimeMillis()) + PHOTO_FILE_EXTENSION
         )
-        //val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-
-        imageCapture.takePicture(executor, object: ImageCapture.OnImageCapturedCallback() {
-            override fun onCaptureSuccess(image: ImageProxy) {
-                // TODO: save after rotate
-                Log.i(TAG, "onCaptureSuccess: image captured")
-                val rotatedBitmap = rotateBitmap(
-                    source = image.toBitmap(),
-                    degrees = image.imageInfo.rotationDegrees.toFloat()
-                )
-                photoFile.outputStream().use { 
-                    rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+        viewModelScope.launch(Dispatchers.IO) {
+            imageCapture.takePicture(executor, object: ImageCapture.OnImageCapturedCallback() {
+                override fun onCaptureSuccess(image: ImageProxy) {
+                    // TODO: save after rotate
+                    Log.i(TAG, "onCaptureSuccess: image captured")
+                    val rotatedBitmap = rotateBitmap(
+                        source = image.toBitmap(),
+                        degrees = image.imageInfo.rotationDegrees.toFloat()
+                    )
+                    photoFile.outputStream().use {
+                        rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                    }
+                    val savedUri = Uri.fromFile(photoFile)
+                    onImageCaptured(savedUri, viewModelScope)
                 }
-                val savedUri = Uri.fromFile(photoFile)
-                onImageCaptured(savedUri, viewModelScope)
-            }
 
-            override fun onError(exception: ImageCaptureException) {
-                Log.e(TAG, "Take photo error:", exception)
-                onError(exception)
-            }
-        })
-
-        /*
-        imageCapture.takePicture(outputOptions, executor, object: ImageCapture.OnImageSavedCallback {
-            override fun onError(exception: ImageCaptureException) {
-                Log.e(TAG, "Take photo error:", exception)
-                onError(exception)
-            }
-
-            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                println("image saved")
-                val savedUri = Uri.fromFile(photoFile)
-                onImageCaptured(savedUri, viewModelScope)
-            }
-        })
-         */
+                override fun onError(exception: ImageCaptureException) {
+                    Log.e(TAG, "Take photo error:", exception)
+                    onError(exception)
+                }
+            })
+        }
     }
 
     fun rotateBitmap(source: Bitmap, degrees: Float): Bitmap {

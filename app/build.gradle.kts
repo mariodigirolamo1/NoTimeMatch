@@ -83,6 +83,9 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.1")
     implementation("androidx.exifinterface:exifinterface:1.3.7")
 
+    // Image Caching
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
 
     implementation("androidx.core:core-ktx:1.9.0")

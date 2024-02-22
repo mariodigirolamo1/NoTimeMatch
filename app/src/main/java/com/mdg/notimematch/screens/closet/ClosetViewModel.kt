@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -27,27 +29,12 @@ private const val TAG = "ClosetViewModel"
 class ClosetViewModel @Inject constructor(
     @RoomDB val localDB: LocalDB
 ) : ViewModel() {
-    private var _garments = MutableStateFlow<List<Garment>>(ArrayList())
-    val garments = _garments.asStateFlow()
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            _garments.tryEmit(localDB.getAllGarments())
-        }
-    }
+    private var _viewState = MutableStateFlow<ClosetViewState>(ClosetViewState.Loading)
+    val viewState = _viewState.asStateFlow()
 
     fun fetchGarments(){
         viewModelScope.launch(Dispatchers.IO) {
-            _garments.tryEmit(localDB.getAllGarments())
+            _viewState.update { ClosetViewState.Ready(localDB.getAllGarments()) }
         }
-    }
-
-    fun getBitmapFromUriString(
-        context: Context,
-        uriString: String
-    ): Bitmap {
-        val contentResolver: ContentResolver = context.contentResolver
-        val inputStream = contentResolver.openInputStream(Uri.parse(uriString))
-        return BitmapFactory.decodeStream(inputStream)
     }
 }
