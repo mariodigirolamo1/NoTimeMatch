@@ -61,6 +61,9 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     testImplementation("androidx.room:room-testing:$roomVersion")
 
+    // Color Detection
+    implementation("androidx.palette:palette-ktx:1.0.0")
+
     // DI
     implementation("com.google.dagger:hilt-android:2.50")
     ksp("com.google.dagger:hilt-android-compiler:2.50")
