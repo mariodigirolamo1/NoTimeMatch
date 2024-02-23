@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
 import com.mdg.notimematch.screens.camera.Camera
 import com.mdg.notimematch.screens.camera.CameraViewModel
 import com.mdg.notimematch.screens.closet.Closet
@@ -25,7 +24,6 @@ import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.model.GarmentType
 import com.mdg.notimematch.navigation.Routes
 import com.mdg.notimematch.screens.garmentdetails.GarmentDetailsViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -151,10 +149,13 @@ fun NoTimeMatchApp(
                 val garmentTypeValue = backStackEntry.arguments!!.getString("garmentTypeValue")
                 val garmentType: GarmentType? = GarmentType.from(garmentTypeValue!!)
                 val photoUriString = Uri.decode(encodedPhotoUriString)
+                val viewState = confirmPhotoViewModel.viewState.collectAsState()
+                LaunchedEffect(Unit) {
+                    confirmPhotoViewModel.getPalette(Uri.parse(photoUriString))
+                }
                 ConfirmPhoto(
-                    getBitmapFromUri = {
-                        confirmPhotoViewModel.getBitmapFromUri(Uri.parse(photoUriString))
-                    },
+                    getViewState = { viewState.value },
+                    getPhotoUri = { photoUriString },
                     saveGarment = {
                         val garment = Garment(
                             type = garmentType!!,
@@ -169,6 +170,9 @@ fun NoTimeMatchApp(
                     },
                     retakePhoto = {
                         navController.popBackStack()
+                    },
+                    onColorSelect = { color ->
+                        confirmPhotoViewModel.updateSelectedColor(color = color)
                     }
                 )
             }.onFailure {

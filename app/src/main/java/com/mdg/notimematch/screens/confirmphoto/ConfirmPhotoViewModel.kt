@@ -2,7 +2,6 @@ package com.mdg.notimematch.screens.confirmphoto
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.ExifInterface
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
@@ -13,7 +12,6 @@ import com.mdg.notimematch.localdb.di.RoomDB
 import com.mdg.notimematch.localdb.room.entity.Garment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -25,15 +23,8 @@ class ConfirmPhotoViewModel @Inject constructor(
     @RoomDB
     val localDB: LocalDB
 ) : ViewModel() {
-    private var _palette = MutableStateFlow<ConfirmPhotoViewState>(ConfirmPhotoViewState.Loading)
-    val palette = _palette.asStateFlow()
-
-    // TODO: do this in coil
-    fun getBitmapFromUri(photoUri: Uri): Bitmap {
-        val bitmap = BitmapFactory.decodeFile(photoUri.toFile().path)
-        getPalette(bitmap = bitmap)
-        return bitmap
-    }
+    private var _viewState = MutableStateFlow<ConfirmPhotoViewState>(ConfirmPhotoViewState.Loading)
+    val viewState = _viewState.asStateFlow()
 
     fun saveGarmentToDB(
         garment: Garment
@@ -43,12 +34,30 @@ class ConfirmPhotoViewModel @Inject constructor(
         }
     }
 
-    private fun getPalette(bitmap: Bitmap){
+    fun updateSelectedColor(color: Int){
+        viewModelScope.launch(Dispatchers.IO){
+            _viewState.update {
+                it as ConfirmPhotoViewState.Ready
+                ConfirmPhotoViewState.Ready(
+                    palette = it.palette,
+                    selectedColor = color
+                )
+            }
+        }
+    }
+
+    // TODO: refere to this for palette:
+    //  https://developer.android.com/develop/ui/views/graphics/palette-colors
+    fun getPalette(photoUri: Uri){
+        val bitmap = BitmapFactory.decodeFile(photoUri.toFile().path)
         viewModelScope.launch(Dispatchers.IO) {
             Palette.from(bitmap).generate { palette ->
                 palette?.let{
-                    _palette.update {
-                        ConfirmPhotoViewState.Ready(palette)
+                    _viewState.update {
+                        ConfirmPhotoViewState.Ready(
+                            palette = palette,
+                            selectedColor = palette.getDominantColor(0xFFFFFF)
+                        )
                     }
                 }
             }
