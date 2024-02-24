@@ -24,34 +24,27 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class CameraViewModel @Inject constructor(): ViewModel() {
     fun takePhoto(
-        onImageCaptured: (Uri, CoroutineScope) -> Unit,
+        //onImageCaptured: (Uri, CoroutineScope) -> Unit,
+        onImageCaptured: (Bitmap, CoroutineScope) -> Unit,
         onError: (ImageCaptureException) -> Unit,
         imageCapture: ImageCapture,
-        outputDirectory: File,
         executor: ExecutorService
     ){
-        val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(System.currentTimeMillis()) + PHOTO_FILE_EXTENSION
-        )
         viewModelScope.launch(Dispatchers.IO) {
             imageCapture.takePicture(executor, object: ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(image: ImageProxy) {
-                    // TODO: save after rotate
-                    Log.i(TAG, "onCaptureSuccess: image captured")
                     val rotatedBitmap = rotateBitmap(
                         source = image.toBitmap(),
                         degrees = image.imageInfo.rotationDegrees.toFloat()
                     )
-                    photoFile.outputStream().use {
-                        rotatedBitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                    }
+                    onImageCaptured(rotatedBitmap, viewModelScope)
+                    /*
                     val savedUri = Uri.fromFile(photoFile)
                     onImageCaptured(savedUri, viewModelScope)
+                     */
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Log.e(TAG, "Take photo error:", exception)
                     onError(exception)
                 }
             })
@@ -64,11 +57,5 @@ class CameraViewModel @Inject constructor(): ViewModel() {
         return Bitmap.createBitmap(
             source, 0, 0, source.width, source.height, matrix, true
         )
-    }
-
-    private companion object {
-        const val PHOTO_FILE_EXTENSION = ".jpg"
-        const val TAG = "CameraViewModel"
-        const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 }
