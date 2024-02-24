@@ -88,7 +88,8 @@ fun NoTimeMatchApp(
                                 navController.popBackStack(Routes.HOME.value,false)
                                 navController.navigate(Routes.CLOSET.value)
                             }
-                        }
+                        },
+                        getGarmentColor = { garment.color }
                     )
                 }else{
                     // TODO: handle null garment
