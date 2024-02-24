@@ -1,9 +1,6 @@
 package com.mdg.notimematch.screens.confirmphoto
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,31 +19,26 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.mdg.notimematch.R
 import com.mdg.notimematch.ui.theme.NoTimeMatchTheme
-import org.jetbrains.annotations.Async
 
 @Composable
 fun ConfirmPhoto(
     getViewState: () -> ConfirmPhotoViewState,
-    getPhotoUri: () -> String,
+    getBitmap: () -> Bitmap?,
     saveGarment: () -> Unit,
     retakePhoto: () -> Unit,
     onColorSelect: (color: Int) -> Unit
@@ -55,12 +48,18 @@ fun ConfirmPhoto(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
+        // TODO: needs just image?
         AsyncImage(
+            modifier = Modifier.heightIn(
+                min = 200.dp,
+                max = 400.dp
+            ),
             model = ImageRequest.Builder(context = LocalContext.current)
-                .data(data = getPhotoUri())
+                //.data(data = getPhotoUri())
+                .data(data = getBitmap())
                 .crossfade(enable = true)
                 .crossfade(500)
-                .scale(Scale.FILL)
+                .scale(Scale.FIT)
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop
@@ -190,10 +189,9 @@ fun CallToActions(
 @Composable
 fun ConfirmPhotoPreview() {
     NoTimeMatchTheme {
-        val context = LocalContext.current
         ConfirmPhoto(
             getViewState = { ConfirmPhotoViewState.Loading },
-            getPhotoUri = { "" },
+            getBitmap = { null },
             saveGarment = {},
             retakePhoto = {},
             onColorSelect = {}

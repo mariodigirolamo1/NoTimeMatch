@@ -1,5 +1,6 @@
 package com.mdg.notimematch
 
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.camera.core.ImageCapture
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import com.mdg.notimematch.model.GarmentType
 import com.mdg.notimematch.navigation.Routes
 import com.mdg.notimematch.screens.confirmphoto.ConfirmPhotoViewState
 import com.mdg.notimematch.screens.garmentdetails.GarmentDetailsViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -111,6 +113,19 @@ fun NoTimeMatchApp(
                 Camera(
                     takePhoto = { imageCapture: ImageCapture ->
                         cameraViewModel.takePhoto(
+                            onImageCaptured = { bitmap: Bitmap, coroutineScope: CoroutineScope ->
+                                coroutineScope.launch{
+                                    withContext(Dispatchers.Main){
+                                        val route = StringBuilder(Routes.CONFIRM_PHOTO.value)
+                                            .append("/")
+                                            .append(garmentTypeValue)
+
+                                        confirmPhotoViewModel.updateImage(bitmap = bitmap)
+                                        navController.navigate(route = route.toString())
+                                    }
+                                }
+                            },
+                            /*
                             onImageCaptured = { uri, coroutineScope ->
                                 val encodedUri = Uri.encode(uri.toString())
                                 coroutineScope.launch{
@@ -125,12 +140,13 @@ fun NoTimeMatchApp(
                                     }
                                 }
                             },
+                             */
                             onError = {
                                 println("Error in taking photo")
                                 it.printStackTrace()
                             },
                             imageCapture = imageCapture,
-                            outputDirectory = outputDirectory,
+                            //outputDirectory = outputDirectory,
                             executor = cameraExecutor
                         )
                     }
@@ -140,31 +156,32 @@ fun NoTimeMatchApp(
             }
         }
         composable(
-            route = "${Routes.CONFIRM_PHOTO.value}/{photoUriString}/{garmentTypeValue}",
+            route = "${Routes.CONFIRM_PHOTO.value}/{garmentTypeValue}",
             arguments = listOf(
-                navArgument("photoUriString") { type = NavType.StringType },
+          //      navArgument("photoUriString") { type = NavType.StringType },
                 navArgument("garmentTypeValue") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             runCatching {
-                val encodedPhotoUriString = backStackEntry.arguments!!.getString("photoUriString")
+              //  val encodedPhotoUriString = backStackEntry.arguments!!.getString("photoUriString")
                 val garmentTypeValue = backStackEntry.arguments!!.getString("garmentTypeValue")
                 val garmentType: GarmentType? = GarmentType.from(garmentTypeValue!!)
-                val photoUriString = Uri.decode(encodedPhotoUriString)
+             //   val photoUriString = Uri.decode(encodedPhotoUriString)
                 val viewState = confirmPhotoViewModel.viewState.collectAsState()
+                val image = confirmPhotoViewModel.image.collectAsState()
                 LaunchedEffect(Unit) {
-                    confirmPhotoViewModel.getPalette(Uri.parse(photoUriString))
+                    image.value?.let { confirmPhotoViewModel.getPalette(it) }
                 }
                 ConfirmPhoto(
                     getViewState = { viewState.value },
-                    getPhotoUri = { photoUriString },
+                    getBitmap = { image.value },
                     saveGarment = {
-                        val garment = Garment(
-                            type = garmentType!!,
-                            color = (viewState.value as ConfirmPhotoViewState.Ready).selectedColor,
-                            photoUriString = photoUriString
-                        )
-                        confirmPhotoViewModel.saveGarmentToDB(garment = garment)
+                        garmentType?.let {
+                            confirmPhotoViewModel.saveGarmentToDB(
+                                garmentType = garmentType,
+                                outputDirectory = outputDirectory
+                            )
+                        }
 
                         navController.popBackStack(Routes.HOME.value, false)
                         navController.navigate(Routes.CLOSET.value)
