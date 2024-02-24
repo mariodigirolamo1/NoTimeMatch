@@ -9,6 +9,6 @@ import com.mdg.notimematch.model.GarmentType
 data class Garment(
     @PrimaryKey(autoGenerate = true) val uid: Int? = null,
     @ColumnInfo(name = "type") val type: GarmentType,
-    @ColumnInfo(name = "hexColor") val hexColor: String,
+    @ColumnInfo(name = "color") val color: Int,
     @ColumnInfo(name = "photoUriString") val photoUriString: String
 )

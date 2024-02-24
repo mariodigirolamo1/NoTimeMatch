@@ -23,6 +23,7 @@ import com.mdg.notimematch.screens.home.Home
 import com.mdg.notimematch.localdb.room.entity.Garment
 import com.mdg.notimematch.model.GarmentType
 import com.mdg.notimematch.navigation.Routes
+import com.mdg.notimematch.screens.confirmphoto.ConfirmPhotoViewState
 import com.mdg.notimematch.screens.garmentdetails.GarmentDetailsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -159,8 +160,7 @@ fun NoTimeMatchApp(
                     saveGarment = {
                         val garment = Garment(
                             type = garmentType!!,
-                            // TODO: this will need to be extracted from code
-                            hexColor = "#FFFFFF",
+                            color = (viewState.value as ConfirmPhotoViewState.Ready).selectedColor,
                             photoUriString = photoUriString
                         )
                         confirmPhotoViewModel.saveGarmentToDB(garment = garment)

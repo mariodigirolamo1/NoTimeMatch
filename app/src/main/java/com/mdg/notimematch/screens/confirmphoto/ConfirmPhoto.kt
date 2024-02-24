@@ -180,7 +180,6 @@ fun CallToActions(
                 .weight(1f)
                 .height(64.dp)
                 .padding(8.dp),
-            // TODO: ask user for correct type
             onClick = saveGarment
         ){
             Text(text = stringResource(R.string.save_photo_button_text))
